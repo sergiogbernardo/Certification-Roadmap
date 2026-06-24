@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import MatrixRain from './components/MatrixRain';
 import TopBar from './components/TopBar';
-import Hero from './components/Hero';
 import RoadmapPanel from './components/RoadmapPanel';
 import TracksPanel from './components/TracksPanel';
 import TrackBuilderPanel from './components/TrackBuilderPanel';
@@ -32,7 +31,10 @@ export default function App() {
         <TopBar />
 
         <main className="mx-auto w-full px-4 py-10 lg:px-8">
-          <Hero />
+          {/* Visually hidden but kept as the page's single H1 for SEO. */}
+          <h1 className="sr-only">
+            Certification Roadmap — Trilhas e certificações de cibersegurança
+          </h1>
 
           <nav className="mb-8 flex flex-wrap justify-center gap-2" aria-label="Seções">
             {TABS.map((t) => (

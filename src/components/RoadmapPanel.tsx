@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState } from 'react';
 import { CERTIFICATIONS } from '../data/certifications';
-import { DOMAINS, LEVELS } from '../data/domains';
+import { DOMAINS, getDomain, LEVELS } from '../data/domains';
 import type { Certification, Domain, DomainId, Level } from '../data/types';
 import { domainStyle } from '../lib/domainStyle';
 import CertModal from './CertModal';
@@ -28,28 +28,41 @@ export default function RoadmapPanel() {
       {/* Heading kept for screen readers / SEO, hidden visually to keep the UI clean. */}
       <h2 className="sr-only">Mapa de certificações</h2>
 
-      {/* Toolbar: domain filter on the left, view toggle on the right. */}
+      {/* Toolbar. The domain headers themselves act as the filter on desktop,
+          so there is no separate chip row — only a clear control, a mobile
+          domain selector and the view toggle. */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          <FilterButton active={activeDomain === 'all'} onClick={() => setActiveDomain('all')}>
-            Todos
-          </FilterButton>
-          {DOMAINS.map((d) => {
-            const s = domainStyle(d.id);
-            const active = activeDomain === d.id;
-            return (
-              <button
-                key={d.id}
-                type="button"
-                onClick={() => setActiveDomain(active ? 'all' : d.id)}
-                className={`chip transition ${active ? `${s.bgStrong} ${s.borderStrong} ${s.text}` : `border-slate-700 text-slate-400 hover:${s.text}`}`}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Mobile-only domain filter (the list view has no domain headers). */}
+          <select
+            value={activeDomain}
+            onChange={(e) => setActiveDomain(e.target.value as DomainId | 'all')}
+            aria-label="Filtrar por domínio"
+            className="rounded-lg border border-slate-700 bg-black/60 px-3 py-1.5 font-mono text-xs text-slate-200 outline-none transition focus:border-emerald-400/50 lg:hidden"
+          >
+            <option value="all">Todos os domínios</option>
+            {DOMAINS.map((d) => (
+              <option key={d.id} value={d.id}>
                 {d.name}
-              </button>
-            );
-          })}
+              </option>
+            ))}
+          </select>
+
+          {activeDomain !== 'all' ? (
+            <button
+              type="button"
+              onClick={() => setActiveDomain('all')}
+              className="chip border-emerald-400/40 bg-emerald-400/10 text-emerald-300 transition hover:bg-emerald-400/20"
+            >
+              ✕ {getDomain(activeDomain).name}
+            </button>
+          ) : (
+            <span className="hidden font-mono text-xs text-slate-600 lg:inline">
+              dica: clique num domínio para filtrar
+            </span>
+          )}
         </div>
+
         {/* The view toggle only applies to the desktop matrix. */}
         <div className="hidden lg:block">
           <ViewToggle view={view} onChange={setView} />
@@ -59,9 +72,21 @@ export default function RoadmapPanel() {
       {/* Desktop: the full matrix (domains as columns or rows). */}
       <div className="hidden lg:block">
         {view === 'columns' ? (
-          <ColumnsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
+          <ColumnsView
+            domains={visibleDomains}
+            selected={selected}
+            onSelect={setSelected}
+            activeDomain={activeDomain}
+            onToggleDomain={setActiveDomain}
+          />
         ) : (
-          <RowsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
+          <RowsView
+            domains={visibleDomains}
+            selected={selected}
+            onSelect={setSelected}
+            activeDomain={activeDomain}
+            onToggleDomain={setActiveDomain}
+          />
         )}
       </div>
 
@@ -181,10 +206,12 @@ interface ViewProps {
   domains: Domain[];
   selected: Certification | null;
   onSelect: (cert: Certification) => void;
+  activeDomain: DomainId | 'all';
+  onToggleDomain: (id: DomainId | 'all') => void;
 }
 
 /** Domains across the top (columns), seniority down the side (rows). */
-function ColumnsView({ domains, selected, onSelect }: ViewProps) {
+function ColumnsView({ domains, selected, onSelect, activeDomain, onToggleDomain }: ViewProps) {
   return (
     <div className="overflow-x-auto pb-2">
       <div
@@ -196,7 +223,12 @@ function ColumnsView({ domains, selected, onSelect }: ViewProps) {
         {/* Header row: empty corner + domain headers. */}
         <div aria-hidden />
         {domains.map((d) => (
-          <DomainHeader key={`head-${d.id}`} domain={d} />
+          <DomainHeader
+            key={`head-${d.id}`}
+            domain={d}
+            active={activeDomain === d.id}
+            onClick={() => onToggleDomain(activeDomain === d.id ? 'all' : d.id)}
+          />
         ))}
 
         {/* One row per level, entry first (top). */}
@@ -220,7 +252,7 @@ function ColumnsView({ domains, selected, onSelect }: ViewProps) {
 }
 
 /** Domains down the side (rows), seniority across the top (columns). */
-function RowsView({ domains, selected, onSelect }: ViewProps) {
+function RowsView({ domains, selected, onSelect, activeDomain, onToggleDomain }: ViewProps) {
   return (
     <div className="overflow-x-auto pb-2">
       <div
@@ -238,7 +270,11 @@ function RowsView({ domains, selected, onSelect }: ViewProps) {
         {/* One row per domain. */}
         {domains.map((d) => (
           <Fragment key={d.id}>
-            <DomainRowLabel domain={d} />
+            <DomainRowLabel
+              domain={d}
+              active={activeDomain === d.id}
+              onClick={() => onToggleDomain(activeDomain === d.id ? 'all' : d.id)}
+            />
             {LEVELS.map((level) => (
               <Cell
                 key={`${d.id}-${level.id}`}
@@ -306,25 +342,57 @@ function CertTile({
   );
 }
 
-function DomainHeader({ domain }: { domain: Domain }) {
+function DomainHeader({
+  domain,
+  active,
+  onClick,
+}: {
+  domain: Domain;
+  active: boolean;
+  onClick: () => void;
+}) {
   const s = domainStyle(domain.id);
   return (
-    <div className={`rounded-lg border ${s.border} ${s.bg} px-3 py-2`}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      title={active ? `Limpar filtro: ${domain.name}` : `Filtrar por ${domain.name}`}
+      className={`rounded-lg border px-3 py-2 text-left transition hover:${s.bgStrong} ${
+        active ? `${s.bgStrong} ${s.borderStrong} ring-1 ${s.ring}` : `${s.border} ${s.bg}`
+      }`}
+    >
       <p className={`font-display text-sm font-semibold ${s.text}`}>{domain.name}</p>
       <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{domain.description}</p>
-    </div>
+    </button>
   );
 }
 
-function DomainRowLabel({ domain }: { domain: Domain }) {
+function DomainRowLabel({
+  domain,
+  active,
+  onClick,
+}: {
+  domain: Domain;
+  active: boolean;
+  onClick: () => void;
+}) {
   const s = domainStyle(domain.id);
   return (
-    <div className={`flex flex-col justify-center rounded-lg border ${s.border} ${s.bg} px-3 py-2`}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      title={active ? `Limpar filtro: ${domain.name}` : `Filtrar por ${domain.name}`}
+      className={`flex flex-col justify-center rounded-lg border px-3 py-2 text-left transition hover:${s.bgStrong} ${
+        active ? `${s.bgStrong} ${s.borderStrong} ring-1 ${s.ring}` : `${s.border} ${s.bg}`
+      }`}
+    >
       <p className={`font-display text-sm font-semibold ${s.text}`}>{domain.name}</p>
       <p className="mt-0.5 hidden text-[11px] leading-snug text-slate-500 lg:block">
         {domain.description}
       </p>
-    </div>
+    </button>
   );
 }
 
@@ -389,22 +457,3 @@ function ToggleButton({
   );
 }
 
-function FilterButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`chip transition ${active ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300' : 'border-slate-700 text-slate-400 hover:text-emerald-300'}`}
-    >
-      {children}
-    </button>
-  );
-}
