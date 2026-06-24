@@ -4,6 +4,7 @@ import { DOMAINS, LEVELS } from '../data/domains';
 import type { Certification, Domain, DomainId, Level } from '../data/types';
 import { domainStyle } from '../lib/domainStyle';
 import CertModal from './CertModal';
+import { DomainChip } from './ui';
 
 type ViewMode = 'columns' | 'rows';
 
@@ -49,19 +50,128 @@ export default function RoadmapPanel() {
             );
           })}
         </div>
-        <ViewToggle view={view} onChange={setView} />
+        {/* The view toggle only applies to the desktop matrix. */}
+        <div className="hidden lg:block">
+          <ViewToggle view={view} onChange={setView} />
+        </div>
       </div>
 
-      {view === 'columns' ? (
-        <ColumnsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
-      ) : (
-        <RowsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
-      )}
+      {/* Desktop: the full matrix (domains as columns or rows). */}
+      <div className="hidden lg:block">
+        {view === 'columns' ? (
+          <ColumnsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
+        ) : (
+          <RowsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
+        )}
+      </div>
+
+      {/* Mobile: a level-grouped accordion list, no horizontal scrolling. */}
+      <div className="lg:hidden">
+        <MobileListView domains={visibleDomains} onSelect={setSelected} />
+      </div>
 
       {selected && (
         <CertModal cert={selected} onClose={() => setSelected(null)} onNavigate={setSelected} />
       )}
     </section>
+  );
+}
+
+/* ── Mobile list view ──────────────────────────────────────────────────────── */
+
+const DOMAIN_ORDER = new Map(DOMAINS.map((d, i) => [d.id, i]));
+
+/** Certs at a given level whose primary domain is currently visible. */
+function levelCerts(domains: Domain[], levelId: string): Certification[] {
+  const visible = new Set(domains.map((d) => d.id));
+  return CERTIFICATIONS.filter((c) => c.level === levelId && visible.has(c.domains[0])).sort(
+    (a, b) =>
+      (DOMAIN_ORDER.get(a.domains[0]) ?? 0) - (DOMAIN_ORDER.get(b.domains[0]) ?? 0) ||
+      a.name.localeCompare(b.name, 'pt-BR'),
+  );
+}
+
+function MobileListView({
+  domains,
+  onSelect,
+}: {
+  domains: Domain[];
+  onSelect: (cert: Certification) => void;
+}) {
+  // Single-open accordion; entry level starts expanded.
+  const [openLevel, setOpenLevel] = useState<string>('entry');
+
+  return (
+    <div className="space-y-2.5">
+      {LEVELS.map((level) => {
+        const certs = levelCerts(domains, level.id);
+        if (certs.length === 0) return null;
+        const open = openLevel === level.id;
+        return (
+          <div
+            key={level.id}
+            className="overflow-hidden rounded-xl border border-slate-800/60 bg-black/40"
+          >
+            <button
+              type="button"
+              onClick={() => setOpenLevel(open ? '' : level.id)}
+              aria-expanded={open}
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+            >
+              <span className="flex items-center gap-2">
+                <span className="font-mono text-[10px] text-emerald-400">
+                  {'●'.repeat(level.rank)}
+                  <span className="text-slate-700">{'●'.repeat(4 - level.rank)}</span>
+                </span>
+                <span className="font-display text-sm font-semibold text-slate-100">
+                  {level.name}
+                </span>
+              </span>
+              <span className="font-mono text-xs text-slate-500">
+                {certs.length} {open ? '▲' : '▼'}
+              </span>
+            </button>
+
+            {open && (
+              <ul className="divide-y divide-slate-800/40 border-t border-slate-800/60">
+                {certs.map((cert) => (
+                  <MobileCertRow key={cert.id} cert={cert} onSelect={onSelect} />
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function MobileCertRow({
+  cert,
+  onSelect,
+}: {
+  cert: Certification;
+  onSelect: (cert: Certification) => void;
+}) {
+  const s = domainStyle(cert.domains[0]);
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => onSelect(cert)}
+        className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:${s.bg}`}
+      >
+        <span className={`h-9 w-1 shrink-0 rounded-full ${s.fill}`} aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-sm font-semibold text-slate-100">
+            {cert.acronym}
+            <span className="font-sans font-normal text-slate-400"> · {cert.name}</span>
+          </span>
+          <span className="block truncate font-mono text-[11px] text-slate-500">{cert.vendor}</span>
+        </span>
+        <DomainChip id={cert.domains[0]} />
+      </button>
+    </li>
   );
 }
 

@@ -9,7 +9,7 @@ export default function TopBar() {
         </span>
 
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 font-mono text-xs text-slate-400">
+          <span className="hidden items-center gap-1.5 font-mono text-xs text-slate-400 sm:flex">
             <span className="h-1.5 w-1.5 animate-pulse-live rounded-full bg-emerald-400" />
             client-side
           </span>

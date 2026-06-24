@@ -49,7 +49,7 @@ export default function CertModal({ cert, onClose, onNavigate }: CertModalProps)
       />
 
       <div
-        className={`relative z-10 w-full max-w-lg animate-fade-in rounded-2xl border ${s.borderStrong} bg-slate-950/95 p-6 shadow-2xl`}
+        className={`relative z-10 max-h-[85vh] w-full max-w-lg animate-fade-in overflow-y-auto rounded-2xl border ${s.borderStrong} bg-slate-950/95 p-6 shadow-2xl`}
       >
         <button
           type="button"
