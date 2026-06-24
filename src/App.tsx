@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import MatrixRain from './components/MatrixRain';
 import TopBar from './components/TopBar';
 import Hero from './components/Hero';
 import RoadmapPanel from './components/RoadmapPanel';
@@ -26,6 +27,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-grid-glow">
+      <MatrixRain />
       <div className="relative z-10">
         <TopBar />
 

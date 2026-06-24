@@ -27,105 +27,124 @@ export default function RoadmapPanel() {
     <section>
       <SectionHeading
         title="Mapa de certificações"
-        subtitle="Colunas por domínio, linhas por senioridade. Clique numa certificação para ver os detalhes."
+        subtitle="Colunas por domínio, linhas por senioridade (entrada embaixo, especialista no topo). Clique numa certificação para ver os detalhes ao lado."
       />
 
-      {/* Domain legend doubles as a filter. */}
-      <div className="mb-5 flex flex-wrap gap-2">
-        <FilterButton active={activeDomain === 'all'} onClick={() => setActiveDomain('all')}>
-          Todos
-        </FilterButton>
-        {DOMAINS.map((d) => {
-          const s = domainStyle(d.id);
-          const active = activeDomain === d.id;
-          return (
-            <button
-              key={d.id}
-              type="button"
-              onClick={() => setActiveDomain(active ? 'all' : d.id)}
-              className={`chip transition ${active ? `${s.bgStrong} ${s.borderStrong} ${s.text}` : `border-slate-700 text-slate-400 hover:${s.text}`}`}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
-              {d.name}
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="overflow-x-auto pb-2">
-        <div
-          className="grid gap-3"
-          style={{
-            gridTemplateColumns: `repeat(${visibleDomains.length}, minmax(180px, 1fr))`,
-          }}
-        >
-          {/* Column headers */}
-          {visibleDomains.map((d) => {
-            const s = domainStyle(d.id);
-            return (
-              <div
-                key={`head-${d.id}`}
-                className={`rounded-lg border ${s.border} ${s.bg} px-3 py-2`}
-              >
-                <p className={`font-display text-sm font-semibold ${s.text}`}>{d.name}</p>
-                <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{d.description}</p>
-              </div>
-            );
-          })}
-
-          {/* Cells, row by row (level by level). */}
-          {rows.map((level) =>
-            visibleDomains.map((d) => {
-              const certs = cellCerts(d.id, level.id);
-              const s = domainStyle(d.id);
-              return (
-                <div
-                  key={`${level.id}-${d.id}`}
-                  className="min-h-[64px] rounded-lg border border-slate-800/60 bg-black/30 p-1.5"
-                >
-                  <span className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-slate-600">
-                    {level.name}
-                  </span>
-                  <div className="flex flex-col gap-1.5">
-                    {certs.map((cert) => (
-                      <button
-                        key={cert.id}
-                        type="button"
-                        onClick={() => setSelected(cert)}
-                        title={cert.name}
-                        className={`rounded-md border ${s.border} ${s.bg} px-2 py-1 text-left transition hover:${s.bgStrong} ${selected?.id === cert.id ? `ring-2 ${s.ring}` : ''}`}
-                      >
-                        <span className={`block font-display text-xs font-semibold ${s.text}`}>
-                          {cert.acronym}
-                        </span>
-                        <span className="block truncate font-mono text-[10px] text-slate-500">
-                          {cert.vendor}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+      <div className="flex flex-col gap-5 lg:flex-row">
+        {/* Detail sidebar — sits on the left and stays visible while the map scrolls. */}
+        <aside className="lg:w-80 lg:shrink-0">
+          <div className="lg:sticky lg:top-20">
+            {selected ? (
+              <div className="animate-fade-in">
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="panel-title">Detalhe</p>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(null)}
+                    className="font-mono text-xs text-slate-500 transition hover:text-slate-300"
+                  >
+                    fechar ✕
+                  </button>
                 </div>
+                <CertCard cert={selected} />
+              </div>
+            ) : (
+              <div className="panel flex min-h-[160px] flex-col items-center justify-center text-center">
+                <p className="font-display text-sm text-slate-400">Detalhe da certificação</p>
+                <p className="mt-1 font-mono text-xs text-slate-600">
+                  clique num bloco do mapa para ver aqui
+                </p>
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {/* Map column. */}
+        <div className="min-w-0 flex-1">
+          {/* Domain legend doubles as a filter. */}
+          <div className="mb-4 flex flex-wrap gap-2">
+            <FilterButton active={activeDomain === 'all'} onClick={() => setActiveDomain('all')}>
+              Todos
+            </FilterButton>
+            {DOMAINS.map((d) => {
+              const s = domainStyle(d.id);
+              const active = activeDomain === d.id;
+              return (
+                <button
+                  key={d.id}
+                  type="button"
+                  onClick={() => setActiveDomain(active ? 'all' : d.id)}
+                  className={`chip transition ${active ? `${s.bgStrong} ${s.borderStrong} ${s.text}` : `border-slate-700 text-slate-400 hover:${s.text}`}`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
+                  {d.name}
+                </button>
               );
-            }),
-          )}
+            })}
+          </div>
+
+          <div className="overflow-x-auto pb-2">
+            <div
+              className="grid gap-2.5"
+              style={{
+                gridTemplateColumns: `repeat(${visibleDomains.length}, minmax(150px, 1fr))`,
+              }}
+            >
+              {/* Column headers */}
+              {visibleDomains.map((d) => {
+                const s = domainStyle(d.id);
+                return (
+                  <div
+                    key={`head-${d.id}`}
+                    className={`rounded-lg border ${s.border} ${s.bg} px-3 py-2`}
+                  >
+                    <p className={`font-display text-sm font-semibold ${s.text}`}>{d.name}</p>
+                    <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
+                      {d.description}
+                    </p>
+                  </div>
+                );
+              })}
+
+              {/* Cells, row by row (level by level). */}
+              {rows.map((level) =>
+                visibleDomains.map((d) => {
+                  const certs = cellCerts(d.id, level.id);
+                  const s = domainStyle(d.id);
+                  return (
+                    <div
+                      key={`${level.id}-${d.id}`}
+                      className="flex min-h-[52px] flex-col rounded-lg border border-slate-800/50 bg-black/30 p-1.5"
+                    >
+                      <span className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-slate-600">
+                        {level.name}
+                      </span>
+                      <div className="flex flex-col gap-1.5">
+                        {certs.map((cert) => (
+                          <button
+                            key={cert.id}
+                            type="button"
+                            onClick={() => setSelected(cert)}
+                            title={cert.name}
+                            className={`rounded-md border ${s.border} ${s.bg} px-2 py-1 text-left transition hover:${s.bgStrong} ${selected?.id === cert.id ? `ring-2 ${s.ring}` : ''}`}
+                          >
+                            <span className={`block font-display text-xs font-semibold ${s.text}`}>
+                              {cert.acronym}
+                            </span>
+                            <span className="block truncate font-mono text-[10px] text-slate-500">
+                              {cert.vendor}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }),
+              )}
+            </div>
+          </div>
         </div>
       </div>
-
-      {selected && (
-        <div className="mt-6">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="panel-title">Detalhe</p>
-            <button
-              type="button"
-              onClick={() => setSelected(null)}
-              className="font-mono text-xs text-slate-500 hover:text-slate-300"
-            >
-              fechar ✕
-            </button>
-          </div>
-          <CertCard cert={selected} />
-        </div>
-      )}
     </section>
   );
 }
