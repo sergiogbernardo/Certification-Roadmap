@@ -764,6 +764,7 @@ export const CERTIFICATIONS: Certification[] = [
     summary: 'Cobre o processo de investigação forense digital, da coleta à apresentação de evidências.',
     url: 'https://www.eccouncil.org/programs/computer-hacking-forensic-investigator-chfi/',
     prereqs: ['comptia-security'],
+    leadsTo: ['giac-gcfa'],
     tags: ['forense'],
   },
   {
@@ -804,7 +805,7 @@ export const CERTIFICATIONS: Certification[] = [
     focus: 'fundamentos de identidade e SSO com a plataforma Okta',
     summary: 'Valida os fundamentos de gestão de identidade e single sign-on na plataforma Okta.',
     url: 'https://www.okta.com/services/training/certification/',
-    leadsTo: ['ms-sc300'],
+    leadsTo: ['ms-sc300', 'cyberark-defender', 'imi-ciam'],
     tags: ['identidade', 'sso'],
   },
   {
@@ -818,6 +819,7 @@ export const CERTIFICATIONS: Certification[] = [
     summary: 'Valida a gestão de identidades, acessos e governança com o Microsoft Entra ID (Azure AD).',
     url: 'https://learn.microsoft.com/credentials/certifications/identity-and-access-administrator/',
     prereqs: ['sc-900'],
+    leadsTo: ['isc2-cissp'],
     tags: ['identidade', 'microsoft'],
   },
   {
@@ -830,6 +832,7 @@ export const CERTIFICATIONS: Certification[] = [
     focus: 'gestão de acessos privilegiados (PAM)',
     summary: 'Foca na operação e defesa de contas privilegiadas com a solução de PAM da CyberArk.',
     url: 'https://www.cyberark.com/services-support/training-certification/',
+    leadsTo: ['isc2-cissp'],
     tags: ['pam', 'privilegiado'],
   },
   {
@@ -842,6 +845,7 @@ export const CERTIFICATIONS: Certification[] = [
     focus: 'gestão de identidade e acesso de forma vendor-neutral',
     summary: 'Certificação neutra de gestão de identidade e acesso, cobrindo governança e ciclo de vida.',
     url: 'https://identitymanagementinstitute.org/ciam/',
+    leadsTo: ['isc2-ccsp'],
     tags: ['identidade', 'governança'],
   },
 ];

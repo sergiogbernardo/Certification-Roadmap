@@ -22,7 +22,7 @@ export const TRACKS: Track[] = [
     tagline: 'Pensar como o atacante e testar defesas.',
     description:
       'Caminho ofensivo: começa com base sólida, passa por pentest prático e chega a red team avançado.',
-    steps: ['comptia-security', 'ine-ejpt', 'comptia-pentest', 'offsec-oscp', 'altered-crtp', 'offsec-osep'],
+    steps: ['comptia-security', 'ine-ejpt', 'comptia-pentest', 'offsec-oscp', 'altered-crtp', 'zps-crto', 'offsec-osep'],
   },
   {
     id: 'grc-audit',
@@ -40,7 +40,7 @@ export const TRACKS: Track[] = [
     tagline: 'Proteger cargas de trabalho em nuvem.',
     description:
       'Trilha de segurança em nuvem: fundamentos, engenharia em Azure/AWS e arquitetura neutra com CCSP.',
-    steps: ['sc-900', 'aws-ccp', 'az-500', 'aws-security', 'sc-200', 'isc2-ccsp'],
+    steps: ['sc-900', 'aws-ccp', 'csa-ccsk', 'az-500', 'aws-security', 'gcp-security', 'sc-200', 'isc2-ccsp'],
   },
   {
     id: 'appsec-devsecops',
@@ -49,7 +49,34 @@ export const TRACKS: Track[] = [
     tagline: 'Segurança de aplicações e código.',
     description:
       'Para desenvolvedores e especialistas em segurança de software: do web hacking ao SDLC seguro.',
-    steps: ['comptia-security', 'portswigger-bscp', 'giac-gwapt', 'isc2-csslp'],
+    steps: ['comptia-security', 'portswigger-bscp', 'giac-gwapt', 'isc2-csslp', 'offsec-oswe'],
+  },
+  {
+    id: 'dfir-forensics',
+    name: 'Forense & DFIR',
+    domain: 'defensive',
+    tagline: 'Forense digital e resposta a incidentes.',
+    description:
+      'Trilha de DFIR: da base defensiva à resposta a incidentes, forense de endpoint e de rede e análise de malware.',
+    steps: ['comptia-security', 'comptia-cysa', 'giac-gcih', 'giac-gcfe', 'giac-gcfa', 'giac-gnfa', 'giac-grem'],
+  },
+  {
+    id: 'iam-identity',
+    name: 'IAM & Identidade',
+    domain: 'iam',
+    tagline: 'Identidade, acesso e gestão de privilégios.',
+    description:
+      'Trilha de IAM: dos fundamentos de identidade à engenharia de acesso, gestão de privilégios (PAM) e identidade de clientes (CIAM).',
+    steps: ['sc-900', 'okta-pro', 'ms-sc300', 'cyberark-defender', 'imi-ciam'],
+  },
+  {
+    id: 'network-infra',
+    name: 'Redes & Infraestrutura',
+    domain: 'network',
+    tagline: 'Redes e infraestrutura, da base ao expert.',
+    description:
+      'Trilha de redes: dos fundamentos ao roteamento e switching profissional e à arquitetura de redes em nível expert, com base de segurança.',
+    steps: ['comptia-network', 'cisco-ccna', 'comptia-security', 'cisco-ccnp', 'cisco-ccie'],
   },
   {
     id: 'leadership-ciso',
