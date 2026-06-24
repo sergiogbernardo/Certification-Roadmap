@@ -1,6 +1,14 @@
+import type { Theme } from '../lib/theme';
+
 const HUB_URL = 'https://sergiogbernardo.github.io/';
 
-export default function TopBar() {
+interface TopBarProps {
+  theme: Theme;
+  onToggleTheme: () => void;
+}
+
+export default function TopBar({ theme, onToggleTheme }: TopBarProps) {
+  const isDark = theme === 'dark';
   return (
     <header className="sticky top-0 z-20 border-b border-emerald-500/10 bg-black/60 backdrop-blur-md">
       <div className="flex w-full items-center justify-between gap-4 px-4 py-3 lg:px-8">
@@ -13,6 +21,17 @@ export default function TopBar() {
             <span className="h-1.5 w-1.5 animate-pulse-live rounded-full bg-emerald-400" />
             client-side
           </span>
+
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={isDark ? 'Ativar tema claro' : 'Ativar tema escuro'}
+            title={isDark ? 'Tema claro' : 'Tema escuro'}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 text-emerald-300 transition hover:bg-emerald-400/10"
+          >
+            {isDark ? <SunIcon /> : <MoonIcon />}
+          </button>
+
           <a
             href={HUB_URL}
             aria-label="Hub de Projetos"
@@ -28,5 +47,42 @@ export default function TopBar() {
         </div>
       </div>
     </header>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+    </svg>
   );
 }

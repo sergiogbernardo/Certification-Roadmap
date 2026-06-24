@@ -48,6 +48,27 @@ export default {
           DEFAULT: '#34d399', // emerald-400 — family brand colour
           soft: '#6ee7b7',
         },
+        // The neutral palette and the accent greens are backed by CSS variables
+        // so the whole UI flips between the dark "hacker" look and a light theme
+        // without touching component classes. Values live in src/index.css.
+        black: 'rgb(var(--c-black) / <alpha-value>)',
+        slate: {
+          100: 'rgb(var(--c-s100) / <alpha-value>)',
+          200: 'rgb(var(--c-s200) / <alpha-value>)',
+          300: 'rgb(var(--c-s300) / <alpha-value>)',
+          400: 'rgb(var(--c-s400) / <alpha-value>)',
+          500: 'rgb(var(--c-s500) / <alpha-value>)',
+          600: 'rgb(var(--c-s600) / <alpha-value>)',
+          700: 'rgb(var(--c-s700) / <alpha-value>)',
+          800: 'rgb(var(--c-s800) / <alpha-value>)',
+          900: 'rgb(var(--c-s900) / <alpha-value>)',
+          950: 'rgb(var(--c-s950) / <alpha-value>)',
+        },
+        emerald: {
+          300: 'rgb(var(--c-e300) / <alpha-value>)',
+          400: 'rgb(var(--c-e400) / <alpha-value>)',
+          500: 'rgb(var(--c-e500) / <alpha-value>)',
+        },
       },
       keyframes: {
         'pulse-live': {

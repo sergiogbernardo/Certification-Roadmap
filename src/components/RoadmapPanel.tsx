@@ -28,45 +28,38 @@ export default function RoadmapPanel() {
       {/* Heading kept for screen readers / SEO, hidden visually to keep the UI clean. */}
       <h2 className="sr-only">Mapa de certificações</h2>
 
-      {/* Toolbar. The domain headers themselves act as the filter on desktop,
-          so there is no separate chip row — only a clear control, a mobile
-          domain selector and the view toggle. */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Mobile-only domain filter (the list view has no domain headers). */}
-          <select
-            value={activeDomain}
-            onChange={(e) => setActiveDomain(e.target.value as DomainId | 'all')}
-            aria-label="Filtrar por domínio"
-            className="rounded-lg border border-slate-700 bg-black/60 px-3 py-1.5 font-mono text-xs text-slate-200 outline-none transition focus:border-emerald-400/50 lg:hidden"
+      {/* View toggle, centered under the section tabs (desktop matrix only). */}
+      <div className="mb-4 hidden justify-center lg:flex">
+        <ViewToggle view={view} onChange={setView} />
+      </div>
+
+      {/* Filter controls: a mobile-only domain selector and, when a domain is
+          active, a clear chip. On desktop the domain headers act as the filter. */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {/* Mobile-only domain filter (the list view has no domain headers). */}
+        <select
+          value={activeDomain}
+          onChange={(e) => setActiveDomain(e.target.value as DomainId | 'all')}
+          aria-label="Filtrar por domínio"
+          className="rounded-lg border border-slate-700 bg-black/60 px-3 py-1.5 font-mono text-xs text-slate-200 outline-none transition focus:border-emerald-400/50 lg:hidden"
+        >
+          <option value="all">Todos os domínios</option>
+          {DOMAINS.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.name}
+            </option>
+          ))}
+        </select>
+
+        {activeDomain !== 'all' && (
+          <button
+            type="button"
+            onClick={() => setActiveDomain('all')}
+            className="chip border-emerald-400/40 bg-emerald-400/10 text-emerald-300 transition hover:bg-emerald-400/20"
           >
-            <option value="all">Todos os domínios</option>
-            {DOMAINS.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-
-          {activeDomain !== 'all' ? (
-            <button
-              type="button"
-              onClick={() => setActiveDomain('all')}
-              className="chip border-emerald-400/40 bg-emerald-400/10 text-emerald-300 transition hover:bg-emerald-400/20"
-            >
-              ✕ {getDomain(activeDomain).name}
-            </button>
-          ) : (
-            <span className="hidden font-mono text-xs text-slate-600 lg:inline">
-              dica: clique num domínio para filtrar
-            </span>
-          )}
-        </div>
-
-        {/* The view toggle only applies to the desktop matrix. */}
-        <div className="hidden lg:block">
-          <ViewToggle view={view} onChange={setView} />
-        </div>
+            ✕ {getDomain(activeDomain).name}
+          </button>
+        )}
       </div>
 
       {/* Desktop: the full matrix (domains as columns or rows). */}

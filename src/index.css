@@ -3,12 +3,54 @@
 @tailwind utilities;
 
 @layer base {
+  /* Dark "hacker" theme (default): the real Tailwind slate/emerald values. */
+  :root {
+    color-scheme: dark;
+    --c-black: 0 0 0;
+    --c-s100: 241 245 249;
+    --c-s200: 226 232 240;
+    --c-s300: 203 213 225;
+    --c-s400: 148 163 184;
+    --c-s500: 100 116 139;
+    --c-s600: 71 85 105;
+    --c-s700: 51 65 85;
+    --c-s800: 30 41 59;
+    --c-s900: 15 23 42;
+    --c-s950: 2 6 23;
+    --c-e300: 110 231 183;
+    --c-e400: 52 211 153;
+    --c-e500: 16 185 129;
+  }
+
+  /* Light theme: invert the neutral scale (text goes dark, surfaces go light)
+     and deepen the accent greens so they stay readable on white. */
+  html.light {
+    color-scheme: light;
+    --c-black: 255 255 255;
+    --c-s100: 15 23 42;
+    --c-s200: 30 41 59;
+    --c-s300: 51 65 85;
+    --c-s400: 71 85 105;
+    --c-s500: 100 116 139;
+    --c-s600: 148 163 184;
+    --c-s700: 203 213 225;
+    --c-s800: 226 232 240;
+    --c-s900: 241 245 249;
+    --c-s950: 248 250 252;
+    --c-e300: 4 120 87;
+    --c-e400: 5 150 105;
+    --c-e500: 16 185 129;
+  }
+
   html {
     @apply scroll-smooth bg-black;
   }
 
   body {
     @apply bg-black font-sans text-slate-100 antialiased;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
   }
 
   ::selection {

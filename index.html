@@ -2,6 +2,15 @@
 <html lang="pt-BR" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Apply the saved theme before paint to avoid a flash of the wrong colours.
+      try {
+        if (localStorage.getItem('cert-roadmap-theme') === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        }
+      } catch (e) {}
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#020617" />
     <meta name="author" content="Sérgio Bernardo" />

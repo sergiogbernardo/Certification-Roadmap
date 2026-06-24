@@ -6,6 +6,7 @@ import TracksPanel from './components/TracksPanel';
 import TrackBuilderPanel from './components/TrackBuilderPanel';
 import ProfilePanel from './components/ProfilePanel';
 import { setPageTitle } from './lib/seo';
+import { useTheme } from './lib/theme';
 
 const TABS = [
   { id: 'map', label: 'Mapa', title: 'Mapa de certificações' },
@@ -18,6 +19,7 @@ type TabId = (typeof TABS)[number]['id'];
 
 export default function App() {
   const [tab, setTab] = useState<TabId>('map');
+  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     const active = TABS.find((t) => t.id === tab);
@@ -26,9 +28,9 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-grid-glow">
-      <MatrixRain />
+      <MatrixRain theme={theme} />
       <div className="relative z-10">
-        <TopBar />
+        <TopBar theme={theme} onToggleTheme={toggle} />
 
         <main className="mx-auto w-full px-4 py-10 lg:px-8">
           {/* Visually hidden but kept as the page's single H1 for SEO. */}
@@ -79,6 +81,7 @@ export default function App() {
             Conteúdo educativo e vendor-neutral · sem afiliação com os fornecedores citados ·
             verifique sempre os requisitos na página oficial de cada certificação.
           </p>
+          <p className="mt-2 font-mono text-xs text-slate-600">© 2026 Sergio Bernardo</p>
         </footer>
       </div>
     </div>

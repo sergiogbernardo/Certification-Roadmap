@@ -1,11 +1,18 @@
 import { useEffect, useRef } from 'react';
+import type { Theme } from '../lib/theme';
 
 const MATRIX_CHARS = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@*+-'.split('');
 
-export default function MatrixRain() {
+export default function MatrixRain({ theme }: { theme: Theme }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    // Light theme fades to white and uses a deeper green so the rain stays
+    // legible on a white page; the dark theme keeps the original look.
+    const isLight = theme === 'light';
+    const fadeColor = isLight ? 'rgba(255, 255, 255, 0.10)' : 'rgba(0, 0, 0, 0.08)';
+    const inkColor = isLight ? 'rgba(16, 185, 129, 0.55)' : 'rgba(34, 197, 94, 0.65)';
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -40,10 +47,10 @@ export default function MatrixRain() {
     };
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillStyle = fadeColor;
       ctx.fillRect(0, 0, width, height);
 
-      ctx.fillStyle = 'rgba(34, 197, 94, 0.65)';
+      ctx.fillStyle = inkColor;
       ctx.font = '16px monospace';
 
       for (let column = 0; column < columns; column += 1) {
@@ -71,7 +78,7 @@ export default function MatrixRain() {
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [theme]);
 
   return (
     <canvas
