@@ -20,7 +20,9 @@ export interface DomainStyle {
 export function domainStyle(domainId: DomainId): DomainStyle {
   const c = getDomain(domainId).color;
   return {
-    text: `text-${c}-300`,
+    // Deeper shade on light (the -300 tint is washed out on white); the dark
+    // theme keeps the original bright -300.
+    text: `text-${c}-700 dark:text-${c}-300`,
     bg: `bg-${c}-400/10`,
     bgStrong: `bg-${c}-500/15`,
     fill: `bg-${c}-400`,

@@ -18,6 +18,8 @@ const domainColors = [
 const domainSafelist = domainColors.flatMap((c) => [
   `text-${c}-300`,
   `text-${c}-400`,
+  `text-${c}-700`,
+  `dark:text-${c}-300`,
   `bg-${c}-400`,
   `bg-${c}-400/10`,
   `bg-${c}-500/15`,
