@@ -31,7 +31,7 @@ export default function App() {
       <div className="relative z-10">
         <TopBar />
 
-        <main className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-6">
+        <main className="mx-auto w-full px-4 py-10 lg:px-8">
           <Hero />
 
           <nav className="mb-8 flex flex-wrap justify-center gap-2" aria-label="Seções">
@@ -52,10 +52,24 @@ export default function App() {
             ))}
           </nav>
 
+          {/* The map fills the full page width; the reading-oriented tabs stay
+              within a comfortable measure so lines don't get too long. */}
           {tab === 'map' && <RoadmapPanel />}
-          {tab === 'tracks' && <TracksPanel />}
-          {tab === 'builder' && <TrackBuilderPanel />}
-          {tab === 'profile' && <ProfilePanel />}
+          {tab === 'tracks' && (
+            <div className="mx-auto max-w-5xl">
+              <TracksPanel />
+            </div>
+          )}
+          {tab === 'builder' && (
+            <div className="mx-auto max-w-5xl">
+              <TrackBuilderPanel />
+            </div>
+          )}
+          {tab === 'profile' && (
+            <div className="mx-auto max-w-6xl">
+              <ProfilePanel />
+            </div>
+          )}
         </main>
 
         <footer className="border-t border-emerald-500/10 py-8 text-center">
