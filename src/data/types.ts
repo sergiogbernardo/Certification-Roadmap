@@ -14,6 +14,7 @@ export type DomainId =
   | 'foundations'
   | 'grc'
   | 'network'
+  | 'iam'
   | 'offensive'
   | 'defensive'
   | 'cloud'

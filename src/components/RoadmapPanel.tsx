@@ -3,8 +3,7 @@ import { CERTIFICATIONS } from '../data/certifications';
 import { DOMAINS, LEVELS } from '../data/domains';
 import type { Certification, Domain, DomainId, Level } from '../data/types';
 import { domainStyle } from '../lib/domainStyle';
-import CertCard from './CertCard';
-import { SectionHeading } from './ui';
+import CertModal from './CertModal';
 
 type ViewMode = 'columns' | 'rows';
 
@@ -23,81 +22,45 @@ export default function RoadmapPanel() {
     [activeDomain],
   );
 
-  const subtitle =
-    view === 'columns'
-      ? 'Domínios nas colunas, senioridade nas linhas (entrada no topo, especialista na base). Clique numa certificação para ver os detalhes à direita.'
-      : 'Domínios nas linhas (à esquerda), senioridade nas colunas. Clique numa certificação para ver os detalhes à direita.';
-
   return (
     <section>
-      <SectionHeading title="Mapa de certificações" subtitle={subtitle}>
-        <ViewToggle view={view} onChange={setView} />
-      </SectionHeading>
+      {/* Heading kept for screen readers / SEO, hidden visually to keep the UI clean. */}
+      <h2 className="sr-only">Mapa de certificações</h2>
 
-      <div className="flex flex-col gap-5 lg:flex-row">
-        {/* Map column (main, on the left). */}
-        <div className="min-w-0 flex-1">
-          {/* Domain legend doubles as a filter. */}
-          <div className="mb-4 flex flex-wrap gap-2">
-            <FilterButton active={activeDomain === 'all'} onClick={() => setActiveDomain('all')}>
-              Todos
-            </FilterButton>
-            {DOMAINS.map((d) => {
-              const s = domainStyle(d.id);
-              const active = activeDomain === d.id;
-              return (
-                <button
-                  key={d.id}
-                  type="button"
-                  onClick={() => setActiveDomain(active ? 'all' : d.id)}
-                  className={`chip transition ${active ? `${s.bgStrong} ${s.borderStrong} ${s.text}` : `border-slate-700 text-slate-400 hover:${s.text}`}`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
-                  {d.name}
-                </button>
-              );
-            })}
-          </div>
-
-          {view === 'columns' ? (
-            <ColumnsView
-              domains={visibleDomains}
-              selected={selected}
-              onSelect={setSelected}
-            />
-          ) : (
-            <RowsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
-          )}
+      {/* Toolbar: domain filter on the left, view toggle on the right. */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          <FilterButton active={activeDomain === 'all'} onClick={() => setActiveDomain('all')}>
+            Todos
+          </FilterButton>
+          {DOMAINS.map((d) => {
+            const s = domainStyle(d.id);
+            const active = activeDomain === d.id;
+            return (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => setActiveDomain(active ? 'all' : d.id)}
+                className={`chip transition ${active ? `${s.bgStrong} ${s.borderStrong} ${s.text}` : `border-slate-700 text-slate-400 hover:${s.text}`}`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
+                {d.name}
+              </button>
+            );
+          })}
         </div>
-
-        {/* Detail sidebar — now on the right, sticky while the map scrolls. */}
-        <aside className="lg:w-80 lg:shrink-0">
-          <div className="lg:sticky lg:top-20">
-            {selected ? (
-              <div className="animate-fade-in">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="panel-title">Detalhe</p>
-                  <button
-                    type="button"
-                    onClick={() => setSelected(null)}
-                    className="font-mono text-xs text-slate-500 transition hover:text-slate-300"
-                  >
-                    fechar ✕
-                  </button>
-                </div>
-                <CertCard cert={selected} />
-              </div>
-            ) : (
-              <div className="panel flex min-h-[160px] flex-col items-center justify-center text-center">
-                <p className="font-display text-sm text-slate-400">Detalhe da certificação</p>
-                <p className="mt-1 font-mono text-xs text-slate-600">
-                  clique num bloco do mapa para ver aqui
-                </p>
-              </div>
-            )}
-          </div>
-        </aside>
+        <ViewToggle view={view} onChange={setView} />
       </div>
+
+      {view === 'columns' ? (
+        <ColumnsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
+      ) : (
+        <RowsView domains={visibleDomains} selected={selected} onSelect={setSelected} />
+      )}
+
+      {selected && (
+        <CertModal cert={selected} onClose={() => setSelected(null)} onNavigate={setSelected} />
+      )}
     </section>
   );
 }

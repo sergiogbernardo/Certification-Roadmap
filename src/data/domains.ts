@@ -27,6 +27,13 @@ export const DOMAINS: Domain[] = [
     description: 'Fundamentos de redes, infraestrutura e a segurança que as protege.',
   },
   {
+    id: 'iam',
+    name: 'Identidade & Acesso',
+    color: 'indigo',
+    short: 'IAM',
+    description: 'Gestão de identidades, autenticação, acessos privilegiados (PAM) e Zero Trust.',
+  },
+  {
     id: 'offensive',
     name: 'Ofensiva & Pentest',
     color: 'rose',

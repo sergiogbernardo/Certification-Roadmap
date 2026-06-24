@@ -7,6 +7,7 @@ const domainColors = [
   'sky', // foundations
   'violet', // grc
   'cyan', // network
+  'indigo', // iam
   'rose', // offensive
   'amber', // defensive
   'blue', // cloud
