@@ -1,6 +1,6 @@
 import type { Theme } from '../lib/theme';
 
-const HUB_URL = 'https://sergiogbernardo.github.io/';
+const HUB_URL = 'https://sabion.io/';
 
 interface TopBarProps {
   theme: Theme;

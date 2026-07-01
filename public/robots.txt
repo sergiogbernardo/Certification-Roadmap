@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sergiogbernardo.github.io/Certification-Roadmap/sitemap.xml
+Sitemap: https://sabion.io/Certification-Roadmap/sitemap.xml
